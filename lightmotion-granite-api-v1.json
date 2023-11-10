@@ -1,0 +1,315 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Lightmotion Granite REST API",
+      "summary": "Documentation for controlling Lightmotion traffic light controllers using the built-in REST API",
+      "contact": {
+        "name": "Lightmotion Oy",
+        "url": "https://lightmotion.fi"
+      }
+    },
+    "servers": [
+      {
+        "url": "https://192.168.1.1/api/v1",
+        "description": "Address of the traffic light controller"
+      }
+    ],
+    "paths": {
+      "/version": {
+        "get": {
+          "description": "Returns identification and version information",
+          "responses": {
+            "200": {
+              "description": "Identification and version information",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/version"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/sessions": {
+        "get": {
+          "description": "Returns all connected sessions",
+          "responses": {
+            "200": {
+              "description": "All connected sessions",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/sessions"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/sessions/{session-id}": {
+        "get": {
+          "description": "Returns information regarding a single session ID",
+          "parameters": [
+            {
+              "name": "session-id",
+              "in": "path",
+              "description": "ID of the session to get",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Information for session ID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/session"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },      
+      "/intersections": {
+        "get": {
+          "description": "Returns all intersections from the controller configuration",
+          "responses": {
+            "200": {
+              "description": "A list of all the intersections",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/intersections"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/intersections/{name}": {
+        "get": {
+          "description": "Returns information for one intersection.\n\nReturned information:\n- Name\n- ITS-CLA that is currently in control (if any)\n- When ITS-CLA was last changed\n- ITS-CLA control state\n- Intersection control state\n- Intersection requested control state\n- When intersection control state was last changed\n- When intersection control state was last requested to change",
+          "parameters": [
+            {
+              "name": "name",
+              "in": "path",
+              "description": "Name of the intersection to get",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Status of the intersection",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/intersection"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "version": {
+            "type": "object",
+            "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Identification of the REST API server",
+                  "example": "Lightmotion Granite 1.0.0"
+                },
+                "api-version": {
+                  "type": "string",
+                  "description": "API version",
+                  "example": "1.0.0"
+                }
+            }
+        },        
+        "intersections": {
+            "type": "array",
+            "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the intersection"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the intersection"
+                }
+            },
+            "example": [
+                {
+                    "name": "JKL901",
+                    "description": "Keljonkankaantie - Säynätsalontie"
+                },
+                {
+                    "name": "TRE401",
+                    "description": "Sammonaukio - Itsenäisyydenkatu"
+                }
+            ]
+        },
+        "sessions": {
+            "type": "array",
+            "properties": {
+                "session-id": {
+                  "type": "string",
+                  "description": "ID of a session"
+                },
+                "username": {
+                    "type": "string",
+                    "description": "Username for the session"
+                }
+            },
+            "example": [
+                {
+                    "session-id": "1234567890",
+                    "username": "Kolibri"
+                },
+                {
+                    "session-id": "5678901234",
+                    "username": "C-ITS"
+                }
+            ]
+        },
+        "session": {
+            "type": "object",
+            "properties": {
+                "session-id": {
+                    "type": "string",
+                    "description": "ID of the session",
+                    "example": "1234567890"    
+                },
+                "username": {
+                    "type": "string",
+                    "description": "Username of the session",
+                    "example": "Kolibri"
+                },
+                "uri": {
+                    "type": "string",
+                    "description": "URI provided by the user",
+                    "example": "ivera-app://10.10.250.50"
+                },
+                "user-type": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "User type; Control, Provider or Consumer",
+                    "example": "2"
+                },
+                "intersection": {
+                    "type": "string",
+                    "description": "Which intersection this session is connected to",
+                    "example": "JKL901"
+                },
+                "control-state": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Session control state",
+                    "example": 5
+                },
+                "user-clock": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "UTC time of the session",
+                    "example": 1234567890
+                },
+                "register-time": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Time when the session registered (Unix time with milliseconds)",
+                    "example": 1234567890
+                },
+                "start-capability": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Defines how CLA can receive an intersection when it starts controlling",
+                    "example": 0
+                },
+                "end-capability": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Defines how CLA can hand over an intersection when it stops controlling",
+                    "example": 0
+                }
+            }
+        },
+        "intersection": {
+            "type": "object",
+            "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the intersection",
+                  "example": "JKL901"
+                },
+                "cla-name": {
+                  "type": "string",
+                  "description": "Name of the ITS-CLA that is selected to control the intersection",
+                  "example": "Kolibri"
+                },
+                "cla-last-change-time": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "When ITS-CLA last changed for this intersection (Unix time with milliseconds)",
+                    "example": 1234567890
+                },
+                "cla-control-state": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "ITS-CLA control state (SPaT Level 3.1)",
+                    "example": 5
+                },
+                "intersection-control-state": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Intersection control state (IDD TLC-FI Chapter 5.5)",
+                    "example": 7
+                },
+                "intersection-requested-control-state": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Intersection control state (IDD TLC-FI Chapter 5.5)",
+                    "example": 7
+                },
+                "intersection-state-change-time": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "When intersection state last changed (Unix time with milliseconds)",
+                    "example": 1234567890
+                },
+                "intersection-state-change-request-time": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "When intersection state was last requested to change (Unix time with milliseconds)",
+                    "example": 1234567890
+                }
+            }
+        },
+        "Error": {
+          "type": "object",
+          "required": [
+            "message"
+          ],
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
