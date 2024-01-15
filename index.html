@@ -41,12 +41,18 @@
         color: #fff;
         top: 50%;
         left: 50%;
-        margin-top: -242px;
-        margin-left: -338px;
+        margin-top: -145px;
+        margin-left: -203px;
         width: 678px;
         height: 483px;
         filter: drop-shadow(0px 0px 15px #000000);
         }
+        #logo{
+        width: 60%;
+        height: auto;
+        left: 0px;
+        right: 0px;
+}
         </style>
         <script>
             window.console = window.console || function(t) {};
@@ -54,7 +60,7 @@
     </head>
     <body translate="no">
         <div id="info">
-            <img src="lightmotion-logo.png" />
+            <img src="lightmotion-logo.png" id="logo"/>
         </div>
         <div id="bg_glow"></div>
         <div id="overlay"></div>
@@ -80,7 +86,7 @@
             dots = [{}];
             mx = 0;my = 0;
             md = 100;
-            maxWidth = 15;
+            maxWidth = 10;
             minWidth = 2;
             maxHeight = h * .9;
             minHeight = h * .5;
